@@ -959,7 +959,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     final int currentServiceId = ServiceHelper.getSelectedServiceId(this);
                     final StreamingService service = NewPipe.getService(currentServiceId);
-                    final String serviceName = service.getKioskList().getDefaultKiosk();
+                    final String serviceName = service.getKioskList().getDefaultKioskId();
                     NavigationHelper.openKioskFragment(fm, currentServiceId, serviceName);
                 } catch (Exception e) {
                     ErrorUtil.showUiErrorSnackbar(this, "Opening kiosk fragment", e);

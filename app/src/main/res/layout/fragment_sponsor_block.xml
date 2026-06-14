@@ -151,7 +151,7 @@
             android:layout_marginBottom="16dp"
             android:background="?android:attr/listDivider" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/skipping_is_enabled_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Opening Theme -->
-    <style name="Base.V19.OpeningTheme" parent="Theme.AppCompat.DayNight.NoActionBar"/>
+    <style name="Base.V19.OpeningTheme" parent="Theme.Material3.DayNight.NoActionBar"/>
     <style name="Base.OpeningTheme" parent="Base.V19.OpeningTheme"/>
     <style name="OpeningTheme" parent="Base.OpeningTheme">
         <item name="colorPrimary">@android:color/transparent</item>
@@ -12,10 +12,10 @@
     </style>
 
     <!-- Base Theme -->
-    <style name="Base.V19" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="actionColor">@color/white</item>
+    <style name="Base.V19" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="actionColor">?attr/colorOnSurface</item>
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonTheme</item>
-        <item name="toolbarSearchColor">@color/white</item>
+        <item name="toolbarSearchColor">?attr/colorOnSurface</item>
         <item name="colorControlActivated">?attr/colorPrimary</item>
     </style>
     <style name="Base" parent="Base.V19"/>
@@ -88,7 +88,7 @@
     <style name="BlackTheme" parent="Base.BlackTheme"/>
 
     <!-- Dialogs -->
-    <style name="LightDialogTheme" parent="Theme.AppCompat.DayNight.Dialog">
+    <style name="LightDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/light_youtube_primary_color</item>
         <item name="colorPrimaryDark">@color/light_youtube_primary_color</item>
         <item name="colorAccent">@color/light_youtube_accent_color</item>
@@ -96,7 +96,7 @@
         <item name="windowBackground">@color/light_dialog_background_color</item>
     </style>
 
-    <style name="DarkDialogTheme" parent="Theme.AppCompat.DayNight.Dialog">
+    <style name="DarkDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/dark_youtube_primary_color</item>
         <item name="colorPrimaryDark">@color/dark_youtube_primary_color</item>
         <item name="colorAccent">@color/dark_youtube_accent_color</item>
@@ -104,7 +104,7 @@
         <item name="windowBackground">@color/dark_dialog_background_color</item>
     </style>
 
-    <style name="LightDialogMinWidthTheme" parent="Theme.AppCompat.DayNight.Dialog.MinWidth">
+    <style name="LightDialogMinWidthTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/light_youtube_primary_color</item>
         <item name="colorPrimaryDark">@color/light_youtube_primary_color</item>
         <item name="colorAccent">@color/light_youtube_accent_color</item>
@@ -112,7 +112,7 @@
         <item name="windowBackground">@color/light_dialog_background_color</item>
     </style>
 
-    <style name="DarkDialogMinWidthTheme" parent="Theme.AppCompat.DayNight.Dialog.MinWidth">
+    <style name="DarkDialogMinWidthTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/dark_youtube_primary_color</item>
         <item name="colorPrimaryDark">@color/dark_youtube_primary_color</item>
         <item name="colorAccent">@color/dark_youtube_accent_color</item>
@@ -150,14 +150,14 @@
     </style>
 
 
-    <style name="BottomSheetDialogTheme.Light.V19" parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="BottomSheetDialogTheme.Light.V19" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/white</item>
     </style>
     <style name="BottomSheetDialogTheme.Light.Base" parent="BottomSheetDialogTheme.Light.V19"/>
 
-    <style name="BottomSheetDialogTheme.Dark.V19" parent="Theme.Design.BottomSheetDialog">
+    <style name="BottomSheetDialogTheme.Dark.V19" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@color/dark_bottom_sheet_color</item>
