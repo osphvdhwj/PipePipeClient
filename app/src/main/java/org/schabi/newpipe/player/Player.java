@@ -1422,6 +1422,44 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Thumbnail loading
 
+    private void applyDynamicColorsFromBitmap(final Bitmap bitmap) {
+        if (bitmap == null) {
+            if (binding != null && binding.getRoot() != null) {
+                binding.getRoot().post(() -> binding.getRoot().setBackgroundColor(android.graphics.Color.BLACK));
+            }
+            return;
+        }
+        try {
+            final Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
+            if (scaledBitmap != null) {
+                final int averageColor = scaledBitmap.getPixel(0, 0);
+                scaledBitmap.recycle();
+
+                final float[] hsl = new float[3];
+                androidx.core.graphics.ColorUtils.colorToHSL(averageColor, hsl);
+                hsl[2] = 0.12f; // dark surface tone
+                hsl[1] = Math.min(hsl[1], 0.35f); // desaturated
+                final int darkBackgroundColor = androidx.core.graphics.ColorUtils.HSLToColor(hsl);
+
+                if (binding != null && binding.getRoot() != null) {
+                    binding.getRoot().post(() -> {
+                        final android.animation.ValueAnimator colorAnimation = android.animation.ValueAnimator.ofObject(
+                                new android.animation.ArgbEvaluator(), android.graphics.Color.BLACK, darkBackgroundColor);
+                        colorAnimation.setDuration(500);
+                        colorAnimation.addUpdateListener(animator -> {
+                            if (binding != null && binding.getRoot() != null) {
+                                binding.getRoot().setBackgroundColor((int) animator.getAnimatedValue());
+                            }
+                        });
+                        colorAnimation.start();
+                    });
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to apply dynamic colors from bitmap", e);
+        }
+    }
+
     private void initThumbnail(final String url) {
         if (DEBUG) {
             Log.d(TAG, "Thumbnail - initThumbnail() called with url = ["
@@ -1442,6 +1480,7 @@ public final class Player implements
                 }
 
                 currentThumbnail = bitmap;
+                applyDynamicColorsFromBitmap(bitmap);
                 NotificationUtil.getInstance()
                         .createNotificationIfNeededAndUpdate(Player.this, false);
                 // there is a new thumbnail, so changed the end screen thumbnail, too.
@@ -1452,6 +1491,7 @@ public final class Player implements
             public void onBitmapFailed(final Exception e, final Drawable errorDrawable) {
                 Log.e(TAG, "Thumbnail - onBitmapFailed() called with: url = [" + url + "]", e);
                 currentThumbnail = null;
+                applyDynamicColorsFromBitmap(null);
                 NotificationUtil.getInstance()
                         .createNotificationIfNeededAndUpdate(Player.this, false);
             }
