@@ -18,7 +18,7 @@
             android:id="@+id/about_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="?attr/colorSurface"
             android:theme="@style/ToolbarTheme"
             app:layout_scrollFlags="scroll|enterAlways" />
 
@@ -26,8 +26,8 @@
             android:id="@+id/about_tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabTextColor="@color/white"
-            app:tabIndicatorColor="@color/white" />
+            android:background="?attr/colorSurface"
+            style="@style/Widget.Material3.TabLayout" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

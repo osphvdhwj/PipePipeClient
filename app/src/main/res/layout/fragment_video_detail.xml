@@ -627,10 +627,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             app:tabIndicatorGravity="top"
-            app:tabIconTint="?attr/colorAccent"
-            app:tabBackground="?attr/windowBackground"
             app:tabGravity="fill"
-            app:elevation="16dp"/>
+            android:background="?attr/colorSurface"
+            style="@style/Widget.Material3.TabLayout" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
