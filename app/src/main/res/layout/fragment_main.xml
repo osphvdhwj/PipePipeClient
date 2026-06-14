@@ -15,7 +15,8 @@
         app:tabIconTint="@color/white"
         app:tabIndicatorColor="@color/white"
         app:tabGravity="fill"
-        app:tabMinWidth="60dp" />
+        app:tabMinWidth="60dp"
+        android:visibility="gone" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"

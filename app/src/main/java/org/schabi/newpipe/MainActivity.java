@@ -53,6 +53,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import org.schabi.newpipe.settings.tabs.Tab;
+import org.schabi.newpipe.local.history.StatisticsPlaylistFragment;
+import org.schabi.newpipe.local.bookmark.BookmarkFragment;
+import org.schabi.newpipe.local.subscription.SubscriptionFragment;
+import org.schabi.newpipe.fragments.list.kiosk.KioskFragment;
 
 import org.schabi.newpipe.databinding.ActivityMainBinding;
 import org.schabi.newpipe.databinding.DrawerHeaderBinding;
@@ -162,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (final Exception e) {
             ErrorUtil.showUiErrorSnackbar(this, "Setting up drawer", e);
         }
+        setupBottomNavigation();
         if (DeviceUtils.isTv(this)) {
             FocusOverlayView.setupFocusObserver(this);
         }
@@ -934,6 +941,107 @@ public class MainActivity extends AppCompatActivity {
         final int sheetState = bottomSheetBehavior.getState();
         return sheetState == BottomSheetBehavior.STATE_HIDDEN
                 || sheetState == BottomSheetBehavior.STATE_COLLAPSED;
+    }
+
+    private void setupBottomNavigation() {
+        mainBinding.bottomNavigation.setOnItemSelectedListener(item -> {
+            final int itemId = item.getItemId();
+            final FragmentManager fm = getSupportFragmentManager();
+            final Fragment currentFragment = fm.findFragmentById(R.id.fragment_holder);
+
+            if (itemId == R.id.action_trending) {
+                if (currentFragment instanceof MainFragment) {
+                    if (((MainFragment) currentFragment).selectTabByType(Tab.KioskTab.class)
+                            || ((MainFragment) currentFragment).selectTabByType(Tab.DefaultKioskTab.class)) {
+                        return true;
+                    }
+                }
+                try {
+                    final int currentServiceId = ServiceHelper.getSelectedServiceId(this);
+                    final StreamingService service = NewPipe.getService(currentServiceId);
+                    final String serviceName = service.getKioskList().getDefaultKiosk();
+                    NavigationHelper.openKioskFragment(fm, currentServiceId, serviceName);
+                } catch (Exception e) {
+                    ErrorUtil.showUiErrorSnackbar(this, "Opening kiosk fragment", e);
+                }
+            } else if (itemId == R.id.action_subscriptions) {
+                if (currentFragment instanceof MainFragment) {
+                    if (((MainFragment) currentFragment).selectTabByType(Tab.SubscriptionsTab.class)) {
+                        return true;
+                    }
+                }
+                NavigationHelper.openSubscriptionFragment(fm);
+            } else if (itemId == R.id.action_bookmarks) {
+                if (currentFragment instanceof MainFragment) {
+                    if (((MainFragment) currentFragment).selectTabByType(Tab.BookmarksTab.class)) {
+                        return true;
+                    }
+                }
+                NavigationHelper.openBookmarksFragment(fm);
+            } else if (itemId == R.id.action_downloads) {
+                NavigationHelper.openDownloads(this);
+            } else if (itemId == R.id.action_history) {
+                if (currentFragment instanceof MainFragment) {
+                    if (((MainFragment) currentFragment).selectTabByType(Tab.HistoryTab.class)) {
+                        return true;
+                    }
+                }
+                NavigationHelper.openStatisticFragment(fm);
+            }
+            return true;
+        });
+
+        // Hide toggle and lock drawer closed
+        if (toggle != null) {
+            mainBinding.getRoot().removeDrawerListener(toggle);
+            toggle = null;
+        }
+        mainBinding.getRoot().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+        // Sync selection state when fragment changes or backstack changes
+        getSupportFragmentManager().addOnBackStackChangedListener(this::syncBottomNavigationState);
+        
+        // Initial sync
+        syncBottomNavigationState();
+    }
+
+    public void syncBottomNavigationState() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_holder);
+        if (fragment == null) return;
+
+        mainBinding.bottomNavigation.setOnItemSelectedListener(null);
+
+        if (fragment instanceof MainFragment) {
+            final Tab activeTab = ((MainFragment) fragment).getActiveTab();
+            if (activeTab != null) {
+                if (activeTab instanceof Tab.KioskTab || activeTab instanceof Tab.DefaultKioskTab) {
+                    mainBinding.bottomNavigation.setSelectedItemId(R.id.action_trending);
+                } else if (activeTab instanceof Tab.SubscriptionsTab) {
+                    mainBinding.bottomNavigation.setSelectedItemId(R.id.action_subscriptions);
+                } else if (activeTab instanceof Tab.BookmarksTab) {
+                    mainBinding.bottomNavigation.setSelectedItemId(R.id.action_bookmarks);
+                } else if (activeTab instanceof Tab.HistoryTab) {
+                    mainBinding.bottomNavigation.setSelectedItemId(R.id.action_history);
+                }
+            }
+        } else if (fragment instanceof SubscriptionFragment) {
+            mainBinding.bottomNavigation.setSelectedItemId(R.id.action_subscriptions);
+        } else if (fragment instanceof BookmarkFragment) {
+            mainBinding.bottomNavigation.setSelectedItemId(R.id.action_bookmarks);
+        } else if (fragment instanceof StatisticsPlaylistFragment) {
+            mainBinding.bottomNavigation.setSelectedItemId(R.id.action_history);
+        } else if (fragment instanceof KioskFragment) {
+            mainBinding.bottomNavigation.setSelectedItemId(R.id.action_trending);
+        }
+
+        mainBinding.bottomNavigation.setOnItemSelectedListener(item -> {
+            setupBottomNavigation();
+            mainBinding.bottomNavigation.setSelectedItemId(item.getItemId());
+            return true;
+        });
+
+        // Update home button/toolbar navigation
+        updateDrawerNavigation();
     }
 
     public static void trustEveryone() {

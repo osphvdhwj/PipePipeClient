@@ -105,6 +105,16 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
         binding.mainTabLayout.setTabRippleColor(binding.mainTabLayout.getTabRippleColor()
                 .withAlpha(32));
 
+        binding.pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                updateTitleForTab(position);
+                if (getActivity() instanceof org.schabi.newpipe.MainActivity) {
+                    ((org.schabi.newpipe.MainActivity) getActivity()).syncBottomNavigationState();
+                }
+            }
+        });
+
         setupTabs();
         updateTabLayoutPosition();
     }
@@ -156,13 +166,20 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == R.id.action_search) {
+        final int itemId = item.getItemId();
+        if (itemId == R.id.action_search) {
             try {
                 NavigationHelper.openSearchFragment(getFM(),
                         ServiceHelper.getSelectedServiceId(activity), "");
             } catch (final Exception e) {
                 ErrorUtil.showUiErrorSnackbar(this, "Opening search fragment", e);
             }
+            return true;
+        } else if (itemId == R.id.action_settings) {
+            NavigationHelper.openSettings(activity);
+            return true;
+        } else if (itemId == R.id.action_about) {
+            NavigationHelper.openAbout(activity);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -254,6 +271,30 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
             Log.d(TAG, "onTabReselected() called with: tab = [" + tab + "]");
         }
         updateTitleForTab(tab.getPosition());
+    }
+
+    public boolean selectTabByType(final Class<? extends Tab> tabClass) {
+        if (binding == null || binding.pager == null) {
+            return false;
+        }
+        for (int i = 0; i < tabsList.size(); i++) {
+            if (tabClass.isInstance(tabsList.get(i))) {
+                binding.pager.setCurrentItem(i, true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Tab getActiveTab() {
+        if (binding == null || binding.pager == null || tabsList.isEmpty()) {
+            return null;
+        }
+        final int currentItem = binding.pager.getCurrentItem();
+        if (currentItem >= 0 && currentItem < tabsList.size()) {
+            return tabsList.get(currentItem);
+        }
+        return null;
     }
 
     private static final class SelectedTabsPagerAdapter
